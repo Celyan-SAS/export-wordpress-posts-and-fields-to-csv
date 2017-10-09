@@ -48,6 +48,7 @@ class wpExportPFCSV {
 		<h2>Export WordPress posts and fields to CSV</h2>
 		<form>
 		<input type="submit" name="action" value="Export" class="wpexportpfcsv" />
+		<input type="hidden" name="page" value="<?php echo htmlentities($_GET['page']); ?>" />
 		</form>
 		<?php
 	}
