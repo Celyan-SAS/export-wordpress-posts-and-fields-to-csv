@@ -95,10 +95,19 @@ class wpExportPFCSV {
 						$value = ";";
 					} elseif( is_array( $value ) ) {
 						$value_s = '';
-						foreach( $value as $val ) {
-							$val = str_replace( '"' , '""' , $val );
-							$val = preg_replace( '/<br\s*\/?>/i', "\n", $val );
-							$value_s .= $val . "\n";
+						foreach( $value as $k => $val ) {
+							if( is_array( $val ) ) {
+								foreach( $val as $key => $v ) {
+									$key = str_replace( '"' , '""' , $key );
+									$v = str_replace( '"' , '""' , $v );
+									$v = preg_replace( '/<br\s*\/?>/i', "\n", $v );
+									$value_s .= $key. ': ' . $v . "\n";
+								}
+							} else {
+								$val = str_replace( '"' , '""' , $val );
+								$val = preg_replace( '/<br\s*\/?>/i', "\n", $val );
+								$value_s .= $val . "\n";
+							}
 						}
 						$value = '"' . $value_s . '"' . ";";
 					} else {
