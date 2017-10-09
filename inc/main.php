@@ -123,7 +123,7 @@ class wpExportPFCSV {
 										$v = str_replace( '"' , '""' , $v );
 										$v = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $v );
 										if( !is_array( $v ) ) {
-											$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
+											$value_s .= $key. ': ' . strip_tags( html_entity_decode( $v ) ) . "\n";
 										} else {
 											$value_s .= $key. ': *SERIALIZED/ARRAY*' . "\n";
 										}
@@ -131,14 +131,14 @@ class wpExportPFCSV {
 								} else {
 									$val = str_replace( '"' , '""' , $val );
 									$val = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $val );
-									$value_s .= strip_tags( $val ) . "\n";
+									$value_s .= strip_tags( html_entity_decode( $val ) ) . "\n";
 								}
 							}
 							$value = '"' . $value_s . '"' . ";";
 						} else {
 							$value = str_replace( '"' , '""' , $value );
 							$value = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $value );
-							$value = '"' . strip_tags( $value ) . '"' . ";";
+							$value = '"' . strip_tags( html_entity_decode( $value ) ) . '"' . ";";
 						}
 						$line .= $value;
 					}
