@@ -93,8 +93,17 @@ class wpExportPFCSV {
 					$value = get_field( $acf_field, $post->ID );
 					if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 						$value = ";";
+					} elseif( is_array( $value ) ) {
+						$value_s = '';
+						foreach( $value as $val ) {
+							$val = str_replace( '"' , '""' , $val );
+							$val = preg_replace( '/<br\s*\/?>/i', "\n", $val );
+							$value_s .= $val . "\n";
+						}
+						$value = '"' . $value_s . '"' . ";";
 					} else {
 						$value = str_replace( '"' , '""' , $value );
+						$value = preg_replace( '/<br\s*\/?>/i', "\n", $value );
 						$value = '"' . $value . '"' . ";";
 					}
 					$line .= $value;
