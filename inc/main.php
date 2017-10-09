@@ -88,8 +88,8 @@ class wpExportPFCSV {
 				$value = '"' . $value . '"' . ";";
 				$line .= $value;
 				
+				/** All ACF fields next **/
 				foreach( array_keys( $acf_fields_a ) as $acf_field ) {
-					
 					$value = get_field( $acf_field, $post->ID );
 					if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 						$value = ";";
@@ -120,8 +120,8 @@ class wpExportPFCSV {
 						$value = '"' . strip_tags( $value ) . '"' . ";";
 					}
 					$line .= $value;
-					$data .= trim( $line ) . "\r\n";
 				}
+				$data .= trim( $line ) . "\r\n";
 			}
 			
 			$header = implode( ';', $header_fields_a );
