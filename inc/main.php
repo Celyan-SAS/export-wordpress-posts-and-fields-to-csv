@@ -96,8 +96,11 @@ class wpExportPFCSV {
 		$data = '';
 		
 		if( $posts = get_posts( array( 'post_type'=>$post_type, 'posts_per_page'=>-1 ) ) ) {
-			$acf_fields_a = get_fields( $posts[0]->ID );
-
+			
+			if( function_exists( 'get_fields' ) ) {
+				$acf_fields_a = get_fields( $posts[0]->ID );
+			}
+			
 			// echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>'; // DEBUG
 			
 			$header_fields_a = array(
@@ -126,7 +129,7 @@ class wpExportPFCSV {
 				$line .= $value;
 				
 				/** All ACF fields next **/
-				if( !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
+				if( function_exists( 'get_field' ) && !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
 					foreach( array_keys( $acf_fields_a ) as $acf_field ) {
 						$value = get_field( $acf_field, $post->ID );
 						if ( ( !isset( $value ) ) || ( $value == "" ) ) {
