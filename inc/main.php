@@ -8,6 +8,8 @@
 */
 class wpExportPFCSV {
 	
+	private $results = null;
+	
 	/**
 	 * Class constructor
 	 *
@@ -45,6 +47,10 @@ class wpExportPFCSV {
 	 */
 	public function plugin_options_page() {
 		
+		if( false === $this->results ) {
+			echo '<div class="error"><p>La requête n\'a retourné aucun résultat.</p></div>';
+		}
+		
 		$post_types = get_post_types( array(), 'names' );
 		?>
 		<h2><?php _e( 'Export WordPress posts and fields to CSV', 'wpexportpfcsv' ); ?></h2>
@@ -66,7 +72,9 @@ class wpExportPFCSV {
 	 */
 	public function hijack() {
 		if( !empty( $_GET['action'] ) && __( 'Export', 'wpexportpfcsv' ) == $_GET['action'] ) {
-			$this->export();
+			if( $this->export() ) {
+				exit;
+			}
 		}
 	}
 	
@@ -154,10 +162,13 @@ class wpExportPFCSV {
 			header("Expires: 0");
 			print "$header\r\n$data";
 			
-			exit;
+			$this->results = true;
+			return true;
 			
 		} else {
-			echo '<div class="results"><p>La requête n\'a retourné aucun résultat.</p></div>';
+			
+			$this->results = false;
+			return false;
 		}
 	}
 	
