@@ -88,7 +88,7 @@ class wpExportPFCSV {
 				$value = '"' . $value . '"' . ";";
 				$line .= $value;
 				
-				foreach( $acf_fields_a as $acf_field ) {
+				foreach( array_keys( $acf_fields_a ) as $acf_field ) {
 					
 					$value = get_field( $acf_field, $post->ID );
 					if ( ( !isset( $value ) ) || ( $value == "" ) ) {
