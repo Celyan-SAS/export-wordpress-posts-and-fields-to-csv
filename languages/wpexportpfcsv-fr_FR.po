@@ -24,3 +24,7 @@ msgstr "Export en CSV"
 #: inc/main.inc.php:50
 msgid "Export WordPress posts and fields to CSV"
 msgstr "Export en CSV des contenus et champs de WordPress"
+
+#: inc/main.inc.php:57,68
+msgid "Export"
+msgstr "Exporter"

@@ -54,7 +54,7 @@ class wpExportPFCSV {
 			<option><?php echo $post_type; ?></option>
 		<?php endforeach; ?>
 		</select>
-		<input type="submit" name="action" value="Export" class="wpexportpfcsv" />
+		<input type="submit" name="action" value="<?php _e( 'Export', 'wpexportpfcsv' ); ?>" class="wpexportpfcsv" />
 		<input type="hidden" name="page" value="<?php echo htmlentities($_GET['page']); ?>" />
 		</form>
 		<?php
@@ -65,7 +65,7 @@ class wpExportPFCSV {
 	 * 
 	 */
 	public function hijack() {
-		if( !empty( $_GET['action'] ) && 'Export' == $_GET['action'] ) {
+		if( !empty( $_GET['action'] ) && __( 'Export', 'wpexportpfcsv' ) == $_GET['action'] ) {
 			$this->export();
 		}
 	}
