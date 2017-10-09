@@ -101,7 +101,11 @@ class wpExportPFCSV {
 									$key = str_replace( '"' , '""' , $key );
 									$v = str_replace( '"' , '""' , $v );
 									$v = preg_replace( '/<br\s*\/?>/i', "\n", $v );
-									$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
+									if( !is_array( $v ) ) {
+										$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
+									} else {
+										$value_s .= $key. ': SERIALIZED/ARRAY' . "\n";
+									}
 								}
 							} else {
 								$val = str_replace( '"' , '""' , $val );
