@@ -82,7 +82,9 @@ class wpExportPFCSV {
 			$query = "
 				SELECT $select_fields
 				FROM $wpdb->posts, $wpdb->postmeta
+				WHERE 1
 			";
+			var_dump( $query );	//DEBUG
 			$res = $wpdb->get_results( $query, ARRAY_A );
 			foreach( $res as $row ) {
 				$line = '';
