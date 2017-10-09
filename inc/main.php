@@ -55,6 +55,7 @@ class wpExportPFCSV {
 		
 		$post_types = get_post_types( array(), 'names' );
 		?>
+		<div class="wrap">
 		<h2><?php _e( 'Export WordPress posts and fields to CSV', 'wpexportpfcsv' ); ?></h2>
 		<form>
 		<select name="post_type">
@@ -65,6 +66,7 @@ class wpExportPFCSV {
 		<input type="submit" name="action" value="<?php _e( 'Export', 'wpexportpfcsv' ); ?>" class="wpexportpfcsv" />
 		<input type="hidden" name="page" value="<?php echo htmlentities($_GET['page']); ?>" />
 		</form>
+		</div>
 		<?php
 	}
 	
