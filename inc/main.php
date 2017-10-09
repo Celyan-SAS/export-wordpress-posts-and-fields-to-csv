@@ -102,7 +102,8 @@ class wpExportPFCSV {
 			
 			$header_fields_a = array(
 				'ID',
-				'post_title'
+				'post_title',
+				'URL'
 			);
 			if( !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
 				$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
@@ -112,10 +113,16 @@ class wpExportPFCSV {
 				
 				$line = '';
 				
-				/** Post ID and post title first **/
+				/** Post ID, post title and URL first **/
 				$line .= $post->ID . ';';
 				$value = str_replace( '"' , '""' , $post->post_title );
 				$value = '"' . $value . '"' . ";";
+				$line .= $value;
+				if( $url = get_permalink( $post->ID ) ) {
+					$value = '"' . $url . '"' . ";";
+				} else {
+					$value = '"N/A";';
+				}
 				$line .= $value;
 				
 				/** All ACF fields next **/
