@@ -101,19 +101,19 @@ class wpExportPFCSV {
 									$key = str_replace( '"' , '""' , $key );
 									$v = str_replace( '"' , '""' , $v );
 									$v = preg_replace( '/<br\s*\/?>/i', "\n", $v );
-									$value_s .= $key. ': ' . $v . "\n";
+									$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
 								}
 							} else {
 								$val = str_replace( '"' , '""' , $val );
 								$val = preg_replace( '/<br\s*\/?>/i', "\n", $val );
-								$value_s .= $val . "\n";
+								$value_s .= strip_tags( $val ) . "\n";
 							}
 						}
 						$value = '"' . $value_s . '"' . ";";
 					} else {
 						$value = str_replace( '"' , '""' , $value );
 						$value = preg_replace( '/<br\s*\/?>/i', "\n", $value );
-						$value = '"' . $value . '"' . ";";
+						$value = '"' . strip_tags( $value ) . '"' . ";";
 					}
 					$line .= $value;
 					$data .= trim( $line ) . "\r\n";
