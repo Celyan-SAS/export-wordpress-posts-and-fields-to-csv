@@ -100,7 +100,7 @@ class wpExportPFCSV {
 								foreach( $val as $key => $v ) {
 									$key = str_replace( '"' , '""' , $key );
 									$v = str_replace( '"' , '""' , $v );
-									$v = preg_replace( '/<br\s*\/?>/i', "\n", $v );
+									$v = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $v );
 									if( !is_array( $v ) ) {
 										$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
 									} else {
@@ -109,14 +109,14 @@ class wpExportPFCSV {
 								}
 							} else {
 								$val = str_replace( '"' , '""' , $val );
-								$val = preg_replace( '/<br\s*\/?>/i', "\n", $val );
+								$val = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $val );
 								$value_s .= strip_tags( $val ) . "\n";
 							}
 						}
 						$value = '"' . $value_s . '"' . ";";
 					} else {
 						$value = str_replace( '"' , '""' , $value );
-						$value = preg_replace( '/<br\s*\/?>/i', "\n", $value );
+						$value = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $value );
 						$value = '"' . strip_tags( $value ) . '"' . ";";
 					}
 					$line .= $value;
