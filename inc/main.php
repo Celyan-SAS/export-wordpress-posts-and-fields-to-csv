@@ -58,11 +58,54 @@ class wpExportPFCSV {
 	 * 
 	 */
 	private function export() {
-
-		if( $posts = get_posts( array( 'post_type'=>'centre', 'posts_per_page'=>1 ) ) ) {
+		global $wpdb;
+		$post_type = 'centre';
+		$data = '';
+		
+		if( $posts = get_posts( array( 'post_type'=>$post_type, 'posts_per_page'=>1 ) ) ) {
 			$fields = get_fields( $posts[0]->ID );
+
+			// echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>'; // DEBUG
+			
+			$select_fields_a = array(
+				'ID',
+				'post_title'
+			);
+			$select_fields_a = array_merge( $select_fields_a, array_keys( $fields ) );
+			$select_fields = implode( ',', $select_fields_a );
+			
+			$query = "
+				SELECT $select_fields
+				FROM $wpdb->posts, $wpdb->postmeta
+			";
+			$res = $wpdb->get_results( $query );
+			foreach( $res as $row ) {
+				$line = '';
+				foreach( $row as $value ) {
+					if ( ( !isset( $value ) ) || ( $value == "" ) ) {
+						$value = ";";
+					} else {
+						$value = str_replace( '"' , '""' , $value );
+						$value = '"' . $value . '"' . ";";
+					}
+					$line .= $value;
+				}
+				$data .= trim( $line ) . "\r\n";
+			}
+			
+			$header = implode( ';', $select_fields_a );
+			
+			header("Content-type: application/octet-stream");
+			header("Content-Disposition: attachment; filename=export.csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+			print "$header\r\n$data";
+			
+			exit;
+			
+		} else {
+			echo '<div class="results"><p>La requête n\'a retourné aucun résultat.</p></div>';
 		}
-		echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>';
 	}
 }
 ?>
