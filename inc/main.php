@@ -102,6 +102,8 @@ class wpExportPFCSV {
 					$value = get_field( $acf_field, $post->ID );
 					if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 						$value = ";";
+					} elseif( is_object( $value ) ) {
+						$value = '"*OBJECT*"' . ";";
 					} elseif( is_array( $value ) ) {
 						$value_s = '';
 						foreach( $value as $k => $val ) {
@@ -113,7 +115,7 @@ class wpExportPFCSV {
 									if( !is_array( $v ) ) {
 										$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
 									} else {
-										$value_s .= $key. ': SERIALIZED/ARRAY' . "\n";
+										$value_s .= $key. ': *SERIALIZED/ARRAY*' . "\n";
 									}
 								}
 							} else {
