@@ -67,28 +67,30 @@ class wpExportPFCSV {
 		$post_type = 'centre';
 		$data = '';
 		
-		if( $posts = get_posts( array( 'post_type'=>$post_type, 'posts_per_page'=>1 ) ) ) {
-			$fields = get_fields( $posts[0]->ID );
+		if( $posts = get_posts( array( 'post_type'=>$post_type, 'posts_per_page'=>-1 ) ) ) {
+			$acf_fields_a = get_fields( $posts[0]->ID );
 
 			// echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>'; // DEBUG
 			
-			$select_fields_a = array(
+			$header_fields_a = array(
 				'ID',
 				'post_title'
 			);
-			$select_fields_a = array_merge( $select_fields_a, array_keys( $fields ) );
-			$select_fields = implode( ',', $select_fields_a );
+			$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
 			
-			$query = "
-				SELECT $select_fields
-				FROM $wpdb->posts, $wpdb->postmeta
-				WHERE 1
-			";
-			var_dump( $query );	//DEBUG
-			$res = $wpdb->get_results( $query, ARRAY_A );
-			foreach( $res as $row ) {
+			foreach( $posts as $post ) {
+				
 				$line = '';
-				foreach( $row as $value ) {
+				
+				/** Post ID and post title first **/
+				$line .= $post->ID . ';';
+				$value = str_replace( '"' , '""' , $post->post_title );
+				$value = '"' . $value . '"' . ";";
+				$line .= $value;
+				
+				foreach( $acf_fields_a as $acf_field ) {
+					
+					$value = get_field( $acf_field, $post->ID );
 					if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 						$value = ";";
 					} else {
@@ -96,11 +98,11 @@ class wpExportPFCSV {
 						$value = '"' . $value . '"' . ";";
 					}
 					$line .= $value;
+					$data .= trim( $line ) . "\r\n";
 				}
-				$data .= trim( $line ) . "\r\n";
 			}
 			
-			$header = implode( ';', $select_fields_a );
+			$header = implode( ';', $header_fields_a );
 			
 			header("Content-type: application/octet-stream");
 			header("Content-Disposition: attachment; filename=export.csv");
