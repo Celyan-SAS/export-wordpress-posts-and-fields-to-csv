@@ -39,12 +39,29 @@ class wpExportPFCSV {
 	 */
 	public function plugin_options_page() {
 		
+		if( !empty( $_GET['action'] ) && 'Exporter par date' == $_GET['action'] ) {
+			$this->export();
+		}
+		
+		//TODO: select post type
 		?>
 		<h2>Export WordPress posts and fields to CSV</h2>
 		<form>
-		<input type="button" class="wpexportpfcsv" value="Export" />
+		<input type="submit" name="action" value="Export" class="wpexportpfcsv" />
 		</form>
 		<?php
+	}
+	
+	/**
+	 * Generation of export dump
+	 * 
+	 */
+	private function export() {
+
+		if( $posts = get_posts( array( 'post_type'=>'centre', 'posts_per_page'=>1 ) ) ) {
+			$fields = get_fields( $posts[0]->ID );
+		}
+		echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>';
 	}
 }
 ?>
