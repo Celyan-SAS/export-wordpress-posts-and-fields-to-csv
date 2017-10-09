@@ -39,7 +39,7 @@ class wpExportPFCSV {
 	 */
 	public function plugin_options_page() {
 		
-		if( !empty( $_GET['action'] ) && 'Exporter par date' == $_GET['action'] ) {
+		if( !empty( $_GET['action'] ) && 'Export' == $_GET['action'] ) {
 			$this->export();
 		}
 		
