@@ -85,7 +85,9 @@ class wpExportPFCSV {
 				'ID',
 				'post_title'
 			);
-			$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
+			if( !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
+				$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
+			}
 			
 			foreach( $posts as $post ) {
 				
