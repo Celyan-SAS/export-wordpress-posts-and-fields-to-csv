@@ -19,6 +19,9 @@ class wpExportPFCSV {
 		
 		/** Hijack admin display **/ 
 		add_action( 'admin_init', array( $this, 'hijack' ));
+		
+		/** Load i18n **/
+		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 	}
 	
 	/**
@@ -44,7 +47,7 @@ class wpExportPFCSV {
 		
 		$post_types = get_post_types( array(), 'names' );
 		?>
-		<h2>Export WordPress posts and fields to CSV</h2>
+		<h2><?php _e( 'Export WordPress posts and fields to CSV', 'wpexportpfcsv' ); ?></h2>
 		<form>
 		<select name="post_type">
 		<?php foreach( $post_types as $post_type ) : ?>
@@ -57,6 +60,10 @@ class wpExportPFCSV {
 		<?php
 	}
 	
+	/**
+	 * Hijack admin headers to launch download
+	 * 
+	 */
 	public function hijack() {
 		if( !empty( $_GET['action'] ) && 'Export' == $_GET['action'] ) {
 			$this->export();
@@ -152,6 +159,14 @@ class wpExportPFCSV {
 		} else {
 			echo '<div class="results"><p>La requête n\'a retourné aucun résultat.</p></div>';
 		}
+	}
+	
+	/**
+	 * Load the text translation files
+	 * 
+	 */
+	public function load_plugin_textdomain() {
+		load_plugin_textdomain( 'wpexportpfcsv', false, plugin_basename( dirname( dirname( __FILE__ ) ) ) . '/languages' );
 	}
 }
 ?>
