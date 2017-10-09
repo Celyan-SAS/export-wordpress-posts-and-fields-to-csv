@@ -39,7 +39,12 @@ class wpExportPFCSV {
 	 */
 	public function plugin_options_page() {
 		
-		echo '<h2>Hello World</h2>';
+		?>
+		<h2>Export WordPress posts and fields to CSV</h2>
+		<form>
+		<input type="button" class="wpexportpfcsv" value="Export" />
+		</form>
+		<?php
 	}
 }
 ?>
