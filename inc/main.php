@@ -16,6 +16,9 @@ class wpExportPFCSV {
 		
 		/** Plugin admin page for export button **/
 		add_action( 'admin_menu', array( $this, 'plugin_admin_add_page' ) );
+		
+		/** Hijack admin display **/ 
+		add_action( 'admin_init', array( $this, 'hijack' ));
 	}
 	
 	/**
@@ -39,10 +42,6 @@ class wpExportPFCSV {
 	 */
 	public function plugin_options_page() {
 		
-		if( !empty( $_GET['action'] ) && 'Export' == $_GET['action'] ) {
-			$this->export();
-		}
-		
 		//TODO: select post type
 		?>
 		<h2>Export WordPress posts and fields to CSV</h2>
@@ -51,6 +50,12 @@ class wpExportPFCSV {
 		<input type="hidden" name="page" value="<?php echo htmlentities($_GET['page']); ?>" />
 		</form>
 		<?php
+	}
+	
+	public function hijack() {
+		if( !empty( $_GET['action'] ) && 'Export' == $_GET['action'] ) {
+			$this->export();
+		}
 	}
 	
 	/**
@@ -78,7 +83,7 @@ class wpExportPFCSV {
 				SELECT $select_fields
 				FROM $wpdb->posts, $wpdb->postmeta
 			";
-			$res = $wpdb->get_results( $query );
+			$res = $wpdb->get_results( $query, ARRAY_A );
 			foreach( $res as $row ) {
 				$line = '';
 				foreach( $row as $value ) {
