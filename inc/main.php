@@ -98,39 +98,41 @@ class wpExportPFCSV {
 				$line .= $value;
 				
 				/** All ACF fields next **/
-				foreach( array_keys( $acf_fields_a ) as $acf_field ) {
-					$value = get_field( $acf_field, $post->ID );
-					if ( ( !isset( $value ) ) || ( $value == "" ) ) {
-						$value = ";";
-					} elseif( is_object( $value ) ) {
-						$value = '"*OBJECT*"' . ";";
-					} elseif( is_array( $value ) ) {
-						$value_s = '';
-						foreach( $value as $k => $val ) {
-							if( is_array( $val ) ) {
-								foreach( $val as $key => $v ) {
-									$key = str_replace( '"' , '""' , $key );
-									$v = str_replace( '"' , '""' , $v );
-									$v = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $v );
-									if( !is_array( $v ) ) {
-										$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
-									} else {
-										$value_s .= $key. ': *SERIALIZED/ARRAY*' . "\n";
+				if( !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
+					foreach( array_keys( $acf_fields_a ) as $acf_field ) {
+						$value = get_field( $acf_field, $post->ID );
+						if ( ( !isset( $value ) ) || ( $value == "" ) ) {
+							$value = ";";
+						} elseif( is_object( $value ) ) {
+							$value = '"*OBJECT*"' . ";";
+						} elseif( is_array( $value ) ) {
+							$value_s = '';
+							foreach( $value as $k => $val ) {
+								if( is_array( $val ) ) {
+									foreach( $val as $key => $v ) {
+										$key = str_replace( '"' , '""' , $key );
+										$v = str_replace( '"' , '""' , $v );
+										$v = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $v );
+										if( !is_array( $v ) ) {
+											$value_s .= $key. ': ' . strip_tags( $v ) . "\n";
+										} else {
+											$value_s .= $key. ': *SERIALIZED/ARRAY*' . "\n";
+										}
 									}
+								} else {
+									$val = str_replace( '"' , '""' , $val );
+									$val = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $val );
+									$value_s .= strip_tags( $val ) . "\n";
 								}
-							} else {
-								$val = str_replace( '"' , '""' , $val );
-								$val = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $val );
-								$value_s .= strip_tags( $val ) . "\n";
 							}
+							$value = '"' . $value_s . '"' . ";";
+						} else {
+							$value = str_replace( '"' , '""' , $value );
+							$value = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $value );
+							$value = '"' . strip_tags( $value ) . '"' . ";";
 						}
-						$value = '"' . $value_s . '"' . ";";
-					} else {
-						$value = str_replace( '"' , '""' , $value );
-						$value = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $value );
-						$value = '"' . strip_tags( $value ) . '"' . ";";
+						$line .= $value;
 					}
-					$line .= $value;
 				}
 				$data .= trim( $line ) . "\r\n";
 			}
