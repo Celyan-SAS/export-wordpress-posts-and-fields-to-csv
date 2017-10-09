@@ -42,10 +42,15 @@ class wpExportPFCSV {
 	 */
 	public function plugin_options_page() {
 		
-		//TODO: select post type
+		$post_types = get_post_types( array(), 'names' );
 		?>
 		<h2>Export WordPress posts and fields to CSV</h2>
 		<form>
+		<select name="post_type">
+		<?php foreach( $post_types as $post_type ) : ?>
+			<option><?php echo $post_type; ?></option>
+		<?php endforeach; ?>
+		</select>
 		<input type="submit" name="action" value="Export" class="wpexportpfcsv" />
 		<input type="hidden" name="page" value="<?php echo htmlentities($_GET['page']); ?>" />
 		</form>
@@ -64,7 +69,11 @@ class wpExportPFCSV {
 	 */
 	private function export() {
 		global $wpdb;
-		$post_type = 'centre';
+		
+		$post_type = 'post';
+		if( !empty( $_GET['post_type'] ) ) {
+			$post_type = sanitize_text_field( $_GET['post_type'] );
+		}
 		$data = '';
 		
 		if( $posts = get_posts( array( 'post_type'=>$post_type, 'posts_per_page'=>-1 ) ) ) {
