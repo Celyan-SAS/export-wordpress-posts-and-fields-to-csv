@@ -25,6 +25,10 @@ msgstr "Export en CSV"
 msgid "Export WordPress posts and fields to CSV"
 msgstr "Export en CSV des contenus et champs de WordPress"
 
+#: inc/main.inc.php:52
+msgid "This request did not return any result."
+msgstr "La requête n'a retourné aucun résultat."
+
 #: inc/main.inc.php:57,68
 msgid "Export"
 msgstr "Exporter"

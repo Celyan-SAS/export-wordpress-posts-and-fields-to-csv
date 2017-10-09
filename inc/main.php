@@ -48,7 +48,9 @@ class wpExportPFCSV {
 	public function plugin_options_page() {
 		
 		if( false === $this->results ) {
-			echo '<div class="error"><p>La requête n\'a retourné aucun résultat.</p></div>';
+			echo '<div class="error"><p>';
+			_e( 'This request did not return any result.', 'wpexportpfcsv' );
+			echo '</p></div>';
 		}
 		
 		$post_types = get_post_types( array(), 'names' );
