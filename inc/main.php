@@ -104,12 +104,15 @@ class wpExportPFCSV {
 			// echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>'; // DEBUG
 			
 			$header_fields_a = array(
-				'ID',
-				'post_title',
-				'URL'
+				'"ID"',
+				'"post_title"',
+				'"URL"'
 			);
 			if( !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
-				$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
+				//$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
+                foreach($acf_fields_a as $acf_fields_key=>$acf_fields){
+                    $header_fields_a[] = '"'.$acf_fields_key.'"';
+                }
 			}
 			
 			foreach( $posts as $post ) {
@@ -166,14 +169,14 @@ class wpExportPFCSV {
 					}
 				}
 				$data .= trim( $line ) . "\r\n";
-			}
-			
+			}			
 			$header = implode( ';', $header_fields_a );
 			
 			header("Content-type: application/octet-stream");
 			header("Content-Disposition: attachment; filename=export.csv");
 			header("Pragma: no-cache");
 			header("Expires: 0");
+            $data = mb_convert_encoding($data,'ISO-8859-15','utf-8');
 			print "$header\r\n$data";
 			
 			$this->results = true;
