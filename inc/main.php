@@ -82,6 +82,32 @@ class wpExportPFCSV {
 		}
 	}
 	
+	private function exportwp_acf_keys_by_name_and_posttype($post_type){
+		$groups = acf_get_field_groups(array('post_type' => $post_type));
+		$group_fields = acf_get_fields($groups[0]['key']);
+		$acf_list_id = array();
+		foreach($group_fields as $acffield){
+			//search first level
+			$acf_list_id[$acffield['name']] = $acffield['key'];
+			
+			//search sub fields
+			if(isset($acffield['sub_fields']) && count($acffield['sub_fields'])>0){
+				foreach($acffield['sub_fields'] as $subfield){
+						$acf_list_id[$subfield['name']] = $subfield['key'];
+						
+					//search sub sub fields
+					if(isset($subfield['sub_fields']) && count($subfield['sub_fields'])>0){
+						foreach($subfield['sub_fields'] as $sub_sub_field){
+							$acf_list_id[$sub_sub_field['name']] = $sub_sub_field['key'];
+						}
+					}
+
+				}
+			}
+		}
+		return $acf_list_id;
+	}
+	
 	/**
 	 * Generation of export dump
 	 * 
@@ -99,7 +125,7 @@ class wpExportPFCSV {
 			
 			if( function_exists( 'get_fields' ) ) {
 				$acf_fields_a = get_fields( $posts[0]->ID );
-			}
+			}		
 			
 			// echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>'; // DEBUG
 			
@@ -107,14 +133,14 @@ class wpExportPFCSV {
 				'"ID"',
 				'"post_title"',
 				'"URL"'
-			);
+			);		
 			if( !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
 				//$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
                 foreach($acf_fields_a as $acf_fields_key=>$acf_fields){
                     $header_fields_a[] = '"'.$acf_fields_key.'"';
                 }
 			}
-			
+
 			foreach( $posts as $post ) {
 				
 				$line = '';
@@ -149,7 +175,10 @@ class wpExportPFCSV {
 										
 										if(is_object($v)){
 											$v = $v->ID;
-										}										
+										}
+										if(is_array($v)){
+											$v = $v['ID'];
+										}
 										$v = str_replace( '"' , '""' , $v );
 										$v = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $v );
 										if( !is_array( $v ) ) {
