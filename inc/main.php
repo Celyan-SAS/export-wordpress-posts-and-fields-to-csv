@@ -138,13 +138,18 @@ class wpExportPFCSV {
 						if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 							$value = ";";
 						} elseif( is_object( $value ) ) {
-							$value = '"*OBJECT*"' . ";";
+							$value = $value->ID;
+							//$value = '"*OBJECT*"' . ";";
 						} elseif( is_array( $value ) ) {
 							$value_s = '';
 							foreach( $value as $k => $val ) {
 								if( is_array( $val ) ) {
 									foreach( $val as $key => $v ) {
 										$key = str_replace( '"' , '""' , $key );
+										
+										if(is_object($v)){
+											$v = $v->ID;
+										}										
 										$v = str_replace( '"' , '""' , $v );
 										$v = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $v );
 										if( !is_array( $v ) ) {
