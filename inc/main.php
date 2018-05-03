@@ -176,7 +176,7 @@ class wpExportPFCSV {
 										if(is_object($v)){
 											$v = $v->ID;
 										}
-										if(is_array($v)){
+										if(is_array($v) && isset($v['ID'])){
 											$v = $v['ID'];
 										}
 										$v = str_replace( '"' , '""' , $v );
