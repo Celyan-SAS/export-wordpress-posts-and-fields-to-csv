@@ -59,6 +59,7 @@ class wpExportPFCSV {
 		<h2><?php _e( 'Export WordPress posts and fields to CSV', 'wpexportpfcsv' ); ?></h2>
 		<form>
 		<select name="post_type">
+			<option>WP_users</option>
 		<?php foreach( $post_types as $post_type ) : ?>
 			<option><?php echo $post_type; ?></option>
 		<?php endforeach; ?>
@@ -108,6 +109,108 @@ class wpExportPFCSV {
 		return $acf_list_id;
 	}
 	
+	private function export_users(){
+		
+		$users = get_users();
+		$data = '';
+		$header_fields_a = array(
+			'ID',
+			'user_login',
+			'user_nicename',
+			'user_email',
+			'user_url',
+			'user_registered',
+			'user_status',
+			'display_name',
+			'roles'
+		  );
+		foreach($users as $user){
+			/* GET USER DATA */
+			//$user_data = get_userdata($user->ID);		
+			/* ADD THIS LIST IN ONE LINE------------------------------------------- */						
+			$line = '';
+			foreach($header_fields_a as $element){
+				
+				/*if it's array implode it*/
+				$value = $user->$element;
+				if(is_array($user->$element)){
+					$value = implode(',', $user->$element);
+				}				
+				$value = str_replace( '"' , '""' , $value );
+				$value = '"' . $value . '"' . ";";
+				$line .= $value;
+			}
+			
+			/*ADD ACF----------------------------------------------------------------*/
+			if( function_exists( 'get_fields' ) ) {
+				$list_acf = $this->get_acf_keys($user->ID);
+				foreach($list_acf as $acf_field_name=>$acf_field_key){
+					//add to the title (putting key to avoid repetition)
+					$header_fields_a[$acf_field_name] = $acf_field_name;				
+					//get data
+					$value = get_field($acf_field_key,$user->ID);
+					if(!$value){
+						$value = "";
+					}
+					if(is_array($value)){
+						$value = implode(',', $value);
+					}				
+					$value = str_replace( '"' , '""' , $value );
+					$value = '"' . $value . '"' . ";";
+					$line .= $value;
+				}
+			}
+			
+			$data .= trim( $line ) . "\r\n";
+		}
+		
+		$header = implode( ';', $header_fields_a );
+		header("Content-type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=export.csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		$data = mb_convert_encoding($data,'ISO-8859-15','utf-8');
+		print "$header\r\n$data";
+
+		$this->results = true;
+		return true;		
+	}
+	
+	private function get_acf_keys($id){
+		$groups = acf_get_field_groups(array('user_id' => $id));
+		$acf_list_id = array();
+		if(isset($groups[0]['key'])){
+			
+			foreach($groups as $group){
+				$group_fields = acf_get_fields($group['key']);
+				foreach($group_fields as $acffield){
+					//search first level
+					$acf_list_id[$acffield['name']] = $acffield['key'];
+
+					//search sub fields
+					if(isset($acffield['sub_fields']) && count($acffield['sub_fields'])>0){
+						$acf_list_id = $this->get_sub_acf_fields($acf_list_id,$acffield['sub_fields']);
+					}
+				}
+			}
+			
+			
+		}
+		return $acf_list_id;
+	}
+
+	private function get_sub_acf_fields($acf_list_id,$subfield){
+		
+		if(isset($array_search[$subfield['name']]) && $subfield['name'] == $array_search[$subfield['name']]){
+			$acf_list_id[$subfield['name']] = $subfield['key'];
+		}
+		if(isset($subfield['sub_fields']) && count($subfield['sub_fields'])>0){
+			$acf_list_id = $this->get_sub_acf_fields($acf_list_id,$subfield['sub_fields']);
+		}
+		
+		return $acf_list_id;
+	}
+	
 	/**
 	 * Generation of export dump
 	 * 
@@ -118,6 +221,12 @@ class wpExportPFCSV {
 		$post_type = 'post';
 		if( !empty( $_GET['post_type'] ) ) {
 			$post_type = sanitize_text_field( $_GET['post_type'] );
+
+			if($post_type == 'WP_users'){
+				$result = $this->export_users();
+				return $result;
+			}
+			
 		}
 		$data = '';
 		
