@@ -140,6 +140,7 @@ class wpExportPFCSV {
                     $header_fields_a[] = '"'.$acf_fields_key.'"';
                 }
 			}
+			$header_fields_a = apply_filters( 'wpc_export_header', $header_fields_a, $post_type );
 
 			foreach( $posts as $post ) {
 				
