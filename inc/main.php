@@ -202,7 +202,7 @@ class wpExportPFCSV {
 						$line .= $value;
 					}
 				}
-				$line = apply_filters( 'wpc_export_line', $line, $post->ID );
+				$line = apply_filters( 'wpc_export_line', $line, $post->ID, $post_type );
 				$data .= trim( $line ) . "\r\n";
 			}			
 			$header = implode( ';', $header_fields_a );
