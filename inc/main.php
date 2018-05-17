@@ -31,6 +31,8 @@ class wpExportPFCSV {
 	 * 
 	 */
 	public function plugin_admin_add_page() {
+		
+		$capability = apply_filters( 'wpc_export_capability', 'manage_options' );
 
 		add_menu_page( 
 			__( 'Export WP posts and fields to CSV', 'wpexportpfcsv' ),	// Page title
