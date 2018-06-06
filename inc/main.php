@@ -125,6 +125,8 @@ class wpExportPFCSV {
 		
 		if( $posts = get_posts( array( 'post_type'=>$post_type, 'posts_per_page'=>-1 ) ) ) {
 			
+			$count = count( $posts );
+			
 			if( function_exists( 'get_fields' ) ) {
 				$acf_fields_a = get_fields( $posts[0]->ID );
 			}		
@@ -210,10 +212,15 @@ class wpExportPFCSV {
 			}			
 			$header = implode( ';', $header_fields_a );
 			
-			header("Content-type: application/octet-stream");
-			header("Content-Disposition: attachment; filename=export.csv");
-			header("Pragma: no-cache");
-			header("Expires: 0");
+			if( !empty( $_GET['debug'] ) && 1==$_GET['debug'] ) {
+				echo '<h1>Export debug</h1>';
+				echo '<p><strong>Found:</strong> ' . $count . '</p>';
+			} else {
+				header("Content-type: application/octet-stream");
+				header("Content-Disposition: attachment; filename=export.csv");
+				header("Pragma: no-cache");
+				header("Expires: 0");
+			}
             $data = mb_convert_encoding($data,'ISO-8859-15','utf-8');
 			print "$header\r\n$data";
 			
