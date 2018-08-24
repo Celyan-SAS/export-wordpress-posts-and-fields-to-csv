@@ -232,13 +232,23 @@ class wpExportPFCSV {
 		}
 		$data = '';
 		
-		if( $posts = get_posts( array( 'post_type'=>$post_type, 'posts_per_page'=>-1, 'post_status'=>'any', 'lang'=>'' ) ) ) {
+		$posts_args = array( 
+		  'post_type'=>$post_type, 
+		  'posts_per_page'=>-1, 
+		  'post_status'=>'any', 
+		  'lang'=>'' );
+		$posts_args = apply_filters('wpc_export_args_get_posts_args',$posts_args,$_GET);
+		
+		$posts = get_posts( $posts_args );
+		$posts = apply_filters('wpc_export_args_get_posts',$posts,$_GET);
+		
+		if( $posts ) {
 			
 			$count = count( $posts );
 			
 			if( function_exists( 'get_fields' ) ) {
 				$acf_fields_a = get_fields( $posts[0]->ID );
-			}		
+			}
 			
 			// echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>'; // DEBUG
 			
