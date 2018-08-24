@@ -237,9 +237,11 @@ class wpExportPFCSV {
 		  'posts_per_page'=>-1, 
 		  'post_status'=>'any', 
 		  'lang'=>'' );
+		//Filter pour les arguments
 		$posts_args = apply_filters('wpc_export_args_get_posts_args',$posts_args,$_GET);
 		
 		$posts = get_posts( $posts_args );
+		//Filter pour les resultat
 		$posts = apply_filters('wpc_export_args_get_posts',$posts,$_GET);
 		
 		if( $posts ) {
