@@ -237,55 +237,82 @@ class wpExportPFCSV {
 		  'posts_per_page'=>-1, 
 		  'post_status'=>'any', 
 		  'lang'=>'' );
-		//Filter pour les arguments
 		$posts_args = apply_filters('wpc_export_args_get_posts_args',$posts_args,$_GET);
 		
 		$posts = get_posts( $posts_args );
-		//Filter pour les resultat
 		$posts = apply_filters('wpc_export_args_get_posts',$posts,$_GET);
 		
 		if( $posts ) {
 			
 			$count = count( $posts );
 			
+			$complete_list_columns = array();
+			
 			if( function_exists( 'get_fields' ) ) {
 				$acf_fields_a = get_fields( $posts[0]->ID );
-			}
-			
+			}			
 			// echo '<pre>ACF fields:<br/>'; var_dump( $fields ); echo '</pre>'; // DEBUG
 			
-			$header_fields_a = array(
-				'"ID"',
-				'"post_title"',
-				'"URL"'
-			);		
+			$the_field_list_post = array(
+				'ID',
+				'post_title',
+				'URL'
+			);
+			$order_fields = $the_field_list_post; //will be completed by acf list if needed
+			
+			$the_field_list_acf = array();
 			if( !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
 				//$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
                 foreach($acf_fields_a as $acf_fields_key=>$acf_fields){
-                    $header_fields_a[] = '"'.$acf_fields_key.'"';
+					$the_field_list_acf[] = $acf_fields_key;
+                    $order_fields[] = $acf_fields_key;
                 }
 			}
+			
+			/** add remove fields linked to the post **/
+			$the_field_list_post = apply_filters( 'wpc_export_fields_post', $the_field_list_post, $post_type );
+			
+			/** add remove fields linked to the ACF **/
+			$the_field_list_acf = apply_filters( 'wpc_export_fields_post_acf', $the_field_list_acf, $post_type );
+			
+			/** we have all fields, now needs the order, or add/remove field **/
+			$order_fields = apply_filters( 'wpc_export_order', $order_fields, $post_type );
+	
+			/** now with the order create the titles **/
+			$header_fields_a = array();
+			foreach($order_fields as $thefield_header){
+				$header_fields_a[$thefield_header] = '"'.$thefield_header.'"';
+			}
+			/** can now replace titles **/
 			$header_fields_a = apply_filters( 'wpc_export_header', $header_fields_a, $post_type );
 
-			foreach( $posts as $post ) {
-				
-				$line = '';
-				
+			foreach( $posts as $post ) {				
+				$line = array();
 				/** Post ID, post title and URL first **/
-				$line .= $post->ID . ';';
-				$value = str_replace( '"' , '""' , $post->post_title );
-				$value = '"' . $value . '"' . ";";
-				$line .= $value;
-				if( $url = get_permalink( $post->ID ) ) {
-					$value = '"' . $url . '"' . ";";
-				} else {
-					$value = '"N/A";';
+				foreach($the_field_list_post as $thefield_key_index => $thefield_key){
+					if(isset($post->$thefield_key) || $thefield_key=="URL"){						
+						/** standard value **/
+						$value = $post->$thefield_key . ';';
+						/** for special value **/
+						if($thefield_key == "post_title"){
+							$value = str_replace( '"' , '""' , $post->post_title ).';';
+						}
+						if($thefield_key == "URL"){
+							if( $url = get_permalink( $post->ID ) ) {
+								$value = '"' . $url . '"' . ";";
+							} else {
+								$value = '"N/A";';
+							}
+						}
+						
+						$line[$thefield_key] = $value;
+					}
 				}
-				$line .= $value;
 				
-				/** All ACF fields next **/
-				if( function_exists( 'get_field' ) && !empty( $acf_fields_a ) && is_array( $acf_fields_a ) ) {
-					foreach( array_keys( $acf_fields_a ) as $acf_field ) {
+				/** All ACF fields next **/				
+				if( function_exists( 'get_field' ) && !empty( $the_field_list_acf ) && is_array( $the_field_list_acf ) ) {
+					//foreach( array_keys( $acf_fields_a ) as $acf_field ) {
+					foreach( $the_field_list_acf as $acf_field ) {						
 						$value = get_field( $acf_field, $post->ID );
 						if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 							$value = ";";
@@ -325,13 +352,35 @@ class wpExportPFCSV {
 							$value = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $value );
 							$value = '"' . strip_tags( html_entity_decode( $value ) ) . '"' . ";";
 						}
-						$line .= $value;
+						//$line .= $value;
+						$line[$acf_field] = $value;						
 					}
 				}
 				$line = apply_filters( 'wpc_export_line', $line, $post->ID, $post_type );
-				$data .= trim( $line ) . "\r\n";
+				
+				/** reorder line **/
+				$new_line_ordered = array();
+				foreach($order_fields as $the_field_order){
+					if(isset($line[$the_field_order])){
+						$new_line_ordered[] = $line[$the_field_order];
+					}else{
+						$new_line_ordered[] = '"";';
+					}
+				}
+				
+				$data .= trim( implode('',$new_line_ordered) ) . "\r\n";
 			}			
-			$header = implode( ';', $header_fields_a );
+			
+			/** reorder titles **/			
+			$new_titles_ordered = array();
+			foreach($order_fields as $the_field_order){
+				if(isset($header_fields_a[$the_field_order])){
+					$new_titles_ordered[] = $header_fields_a[$the_field_order];
+				}else{
+					$new_titles_ordered[] = '';
+				}
+			}		
+			$header = implode( ';', $new_titles_ordered );
 			
 			if( !empty( $_GET['debug'] ) && 1==$_GET['debug'] ) {
 				echo '<h1>Export debug</h1>';
