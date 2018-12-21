@@ -114,7 +114,7 @@ class wpExportPFCSV {
 	private function export_users(){
 		
 		$args = array();
-		$args = apply_filters('wpc_user_args_query_filter',$args,$get);
+		$args = apply_filters('wpc_user_args_query_filter',$args,$_GET);
 		
 		$users = get_users($args);
 		$data = '';
@@ -129,10 +129,10 @@ class wpExportPFCSV {
 			'display_name',
 			'roles'
 		  );
-		$header_fields_a = apply_filters('wpc_user_header_fields_filter',$header_fields_a,$get);
+		$header_fields_a = apply_filters('wpc_user_header_fields_filter',$header_fields_a,$_GET);
 		foreach($users as $user){
 			
-			$user = apply_filters('wpc_user_filter',$user,$get);
+			$user = apply_filters('wpc_user_filter',$user,$_GET);
 			
 			/* GET USER DATA */
 			//$user_data = get_userdata($user->ID);		
