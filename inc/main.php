@@ -113,32 +113,55 @@ class wpExportPFCSV {
 	
 	private function export_users(){
 		
+		/** args for the get users and get users **/
 		$args = array();
 		$args = apply_filters('wpc_user_args_query_filter',$args,$_GET);
 		$users = get_users($args);		
+		
+		/** set fields **/
+		$user_fields = array(
+			'ID'=>'ID',
+			'user_login'=>'user_login',
+			'user_nicename'=>'user_nicename',
+			'user_email'=>'user_email',
+			'user_url'=>'user_url',
+			'user_registered'=>'user_registered',
+			'user_status'=>'user_status',
+			'display_name'=>'display_name',
+			'roles'=>'roles'
+		);
+		
+		/** add ACF fields  **/ 
+		$the_field_list_acf = array(); //keep a list of them seperated of the complete list
+		if( function_exists( 'get_fields' ) ) {
+			$acf_fields_array = get_fields( 'user_'.$users[0]->ID );
+			if( !empty( $acf_fields_array ) && is_array( $acf_fields_array ) ) {
+				//$header_fields_a = array_merge( $header_fields_a, array_keys( $acf_fields_a ) );
+				foreach($acf_fields_array as $acf_fields_key=>$acf_fields){
+					$the_field_list_acf[$acf_fields_key] = $acf_fields_key;
+					//$order_fields[] = $acf_fields_key;
+				}
+			}			
+		}
+		
+		/** add/remove other fields **/
+		$the_field_list_acf = apply_filters( 'wpc_export_user_acffields', $the_field_list_acf,$_GET );
+		
+		/** order fields **/
+		$complete_list = array_merge($user_fields,$the_field_list_acf);
+		$order_fields = apply_filters( 'wpc_export_user_order', $complete_list,$_GET );
+		
+		/** headers (for titles) **/
+		$header_fields = apply_filters('wpc_user_header_fields_filter',$order_fields,$_GET);
+				
+		/** change list of users **/
+		$users = apply_filters('wpc_users_result_filter',$users,$_GET);
 		$data = '';
-		$header_fields_a = array(
-			'ID',
-			'user_login',
-			'user_nicename',
-			'user_email',
-			'user_url',
-			'user_registered',
-			'user_status',
-			'display_name',
-			'roles'
-		  );
-		$header_fields_a = apply_filters('wpc_user_header_fields_filter',$header_fields_a,$_GET);
 		foreach($users as $user){
 			
-			$user = apply_filters('wpc_user_filter',$user,$_GET);
-			
-			/* GET USER DATA */
-			//$user_data = get_userdata($user->ID);		
 			/* ADD THIS LIST IN ONE LINE------------------------------------------- */						
-			$line = '';
-			foreach($header_fields_a as $element){
-				
+			$line = array();
+			foreach($order_fields as $element){
 				/*if it's array implode it*/
 				$value = $user->$element;
 				if(is_array($user->$element)){
@@ -146,17 +169,14 @@ class wpExportPFCSV {
 				}				
 				$value = str_replace( '"' , '""' , $value );
 				$value = '"' . $value . '"' . ";";
-				$line .= $value;
+				$line[] = $value;
 			}
 			
 			/*ADD ACF----------------------------------------------------------------*/
 			if( function_exists( 'get_fields' ) ) {
-				$list_acf = $this->get_acf_keys($user->ID);
-				foreach($list_acf as $acf_field_name=>$acf_field_key){
-					//add to the title (putting key to avoid repetition)
-					$header_fields_a[$acf_field_name] = $acf_field_name;				
+				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
 					//get data
-					$value = get_field($acf_field_key,$user->ID);
+					$value = get_field('user_'.$acf_field_key,$user->ID);
 					if(!$value){
 						$value = "";
 					}
@@ -165,14 +185,15 @@ class wpExportPFCSV {
 					}				
 					$value = str_replace( '"' , '""' , $value );
 					$value = '"' . $value . '"' . ";";
-					$line .= $value;
+					$line[$acf_field_key] = $value;
 				}
 			}
-			
-			$data .= trim( $line ) . "\r\n";
+			/** add/remove fields **/
+			$line = apply_filters( 'wpc_export_user_line', $line, $user->ID, $_GET );
+			$data .= trim( implode('',$line) ) . "\r\n";
 		}
 		
-		$header = implode( ';', $header_fields_a );
+		$header = implode( ';', $header_fields );
 		header("Content-type: application/octet-stream");
 		header("Content-Disposition: attachment; filename=export.csv");
 		header("Pragma: no-cache");
