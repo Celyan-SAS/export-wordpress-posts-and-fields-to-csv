@@ -115,8 +115,7 @@ class wpExportPFCSV {
 		
 		$args = array();
 		$args = apply_filters('wpc_user_args_query_filter',$args,$_GET);
-		
-		$users = get_users($args);
+		$users = get_users($args);		
 		$data = '';
 		$header_fields_a = array(
 			'ID',
@@ -210,7 +209,14 @@ class wpExportPFCSV {
 
 	private function get_sub_acf_fields($acf_list_id,$subfield){
 		
-		if(isset($array_search[$subfield['name']]) && isset($subfield['name']) && $subfield['name'] == $array_search[$subfield['name']]){
+		if(isset($subfield[0]['name'])){
+			$subfield = $subfield[0];
+		}
+		
+		if(
+			isset($array_search[$subfield['name']]) 
+			&& isset($subfield['name']) 
+			&& $subfield['name'] == $array_search[$subfield['name']]){
 			$acf_list_id[$subfield['name']] = $subfield['key'];
 		}
 		if(isset($subfield['sub_fields']) && count($subfield['sub_fields'])>0){
