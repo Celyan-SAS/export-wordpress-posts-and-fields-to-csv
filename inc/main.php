@@ -351,7 +351,7 @@ class wpExportPFCSV {
 						if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 							$value = ";";
 						} elseif( is_object( $value ) ) {
-							$value = $value->ID;
+							$value = $value->ID.";";
 							//$value = '"*OBJECT*"' . ";";
 						} elseif( is_array( $value ) ) {
 							$value_s = '';
