@@ -195,14 +195,12 @@ class wpExportPFCSV {
 			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
+echo "<pre>", print_r("line_before", 1), "</pre>";
+echo "<pre>", print_r($line, 1), "</pre>";				
 			$list_values_buddypress = $this->get_user_data_buddypress($user->ID);
 echo "<pre>", print_r("all line buddy", 1), "</pre>";
 echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
-			foreach($list_values_buddypress as $buddy_value){
-				
-echo "<pre>", print_r("buddy_value", 1), "</pre>";
-echo "<pre>", print_r($buddy_value, 1), "</pre>";
-				
+			foreach($list_values_buddypress as $buddy_value){				
 				$buddy_value = str_replace( '"' , '""' , $buddy_value );
 				$buddy_value = '"' . $buddy_value . '"' . ";";
 				$line[] = $buddy_value;	
