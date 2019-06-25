@@ -178,21 +178,21 @@ class wpExportPFCSV {
 			}
 			
 			/*ADD ACF----------------------------------------------------------------*/
-			if( function_exists( 'get_fields' ) ) {
-				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
-					//get data
-					$value = get_field('user_'.$acf_field_key,$user->ID);
-					if(!$value){
-						$value = "";
-					}
-					if(is_array($value)){
-						$value = implode(',', $value);
-					}				
-					$value = str_replace( '"' , '""' , $value );
-					$value = '"' . $value . '"' . ";";
-					$line[$acf_field_key] = $value;
-				}
-			}
+//			if( function_exists( 'get_fields' ) ) {
+//				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
+//					//get data
+//					$value = get_field('user_'.$acf_field_key,$user->ID);
+//					if(!$value){
+//						$value = "";
+//					}
+//					if(is_array($value)){
+//						$value = implode(',', $value);
+//					}				
+//					$value = str_replace( '"' , '""' , $value );
+//					$value = '"' . $value . '"' . ";";
+//					$line[$acf_field_key] = $value;
+//				}
+//			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
 echo "<pre>", print_r("line_before", 1), "</pre>";
