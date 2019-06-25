@@ -288,7 +288,9 @@ class wpExportPFCSV {
 					//field name
 					if($titles){
 						//$list_to_return[] =  bp_get_the_profile_field_input_name();
-						$list_to_return[] =  bp_get_the_profile_field_id();
+						$list_to_return[] =  bp_the_profile_field_name();
+//						$list_to_return[] =  apply_filters( 'bp_get_the_profile_field_required_label', $translated_string, bp_get_the_profile_field_id() );
+						//$list_to_return[] =  bp_get_the_profile_field_id();
 					}else{
 						$list_to_return[] =  bp_get_the_profile_field_edit_value();
 					}
