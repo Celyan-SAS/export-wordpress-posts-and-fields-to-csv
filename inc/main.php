@@ -265,62 +265,30 @@ class wpExportPFCSV {
 		return $acf_list_id;
 	}
 	
-	private function get_user_data_buddypress($user_id = null,$titles = false, $args = array()){
+	private function get_user_data_buddypress($user_id = null,$titles = false){
 		// Bail if no user ID.
 		if ( empty( $user_id ) ) {
-			echo "<pre>", print_r("1 -- ", 1), "</pre>";
 			return array();
 		}
-		if (!function_exists("bp_parse_args") ) {
-			echo "<pre>", print_r("2 -- ", 1), "</pre>";
+		//Bail if the buddypress doesn't exists
+		if (!function_exists("bp_has_profile") ) {
 			return array();
 		}		
-
-		if(!isset($args['args'])){
-			$args['args'] = array();
-		}
 		
-		$profile_args = array(
-			'user_id'      => $user_id,
-		);
-		$a = bp_has_profile( $profile_args );
-echo "<pre>", print_r("a ------------ ", 1), "</pre>";
-echo "<pre>", print_r($a, 1), "</pre>";
-			
-//		$r = bp_parse_args( $args['args'], array(
-//			'profile_group_id' => 0,
-//			'user_id'          => $user_id
-//		), 'bp_xprofile_user_admin_profile_loop_args' );
+		/** need to init profile to the loop to work **/
+		$profile_args = array('user_id' => $user_id);
+		$profile = bp_has_profile( $profile_args );
 
-		// We really need these args.
-//		if ( empty( $r['profile_group_id'] ) || empty( $r['user_id'] ) ) {
-//			return array();
-//		}
-//
-//		// Bail if no profile fields are available.
-//		if ( ! bp_has_profile( $r ) ) {
-//			return array();
-//		}
-
-		$list_to_return = array();
-				
+		$list_to_return = array();				
 		// Loop through profile groups & fields.
 		while ( bp_profile_groups() ) : bp_the_profile_group();
 
 			//group info name echo  bp_get_the_profile_group_slug()
-		
-echo "<pre>", print_r("TEST  - ", 1), "</pre>";
-echo "<pre>", print_r( bp_get_the_profile_group_slug(), 1), "</pre>";
-
-			if ( bp_get_the_profile_group_description() ) {
-				//group info description bp_the_profile_group_description();
-			}
+//			if ( bp_get_the_profile_group_description() ) {
+//				//group info description bp_the_profile_group_description();
+//			}
 			
-			while ( bp_profile_fields() ) : bp_the_profile_field();
-
-echo "<pre>", print_r("bp_get_the_profile_field_input_name()", 1), "</pre>";
-echo "<pre>", print_r(bp_get_the_profile_field_input_name(), 1), "</pre>";
-			
+			while ( bp_profile_fields() ) : bp_the_profile_field();			
 					//field name
 					if($titles){
 						$list_to_return[] =  bp_get_the_profile_field_input_name();
@@ -333,7 +301,6 @@ echo "<pre>", print_r(bp_get_the_profile_field_input_name(), 1), "</pre>";
 		endwhile; // End bp_profile_groups.
 		
 		return $list_to_return;
-die("-----------------");
 	}
 	
 	/**
