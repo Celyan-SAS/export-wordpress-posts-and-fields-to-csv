@@ -292,7 +292,10 @@ class wpExportPFCSV {
 		// Loop through profile groups & fields.
 		while ( bp_profile_groups() ) : bp_the_profile_group();
 
-			//group info name echo esc_attr( 'field_ids_' . bp_get_the_profile_group_slug() );
+			//group info name echo  bp_get_the_profile_group_slug()
+		
+echo "<pre>", print_r("TEST  - ", 1), "</pre>";
+echo "<pre>", print_r( bp_get_the_profile_group_slug(), 1), "</pre>";
 
 			if ( bp_get_the_profile_group_description() ) {
 				//group info description bp_the_profile_group_description();
@@ -300,6 +303,9 @@ class wpExportPFCSV {
 			
 			while ( bp_profile_fields() ) : bp_the_profile_field();
 
+echo "<pre>", print_r("bp_get_the_profile_field_input_name()", 1), "</pre>";
+echo "<pre>", print_r(bp_get_the_profile_field_input_name(), 1), "</pre>";
+			
 					//field name
 					if($titles){
 						$list_to_return[] =  bp_get_the_profile_field_input_name();
