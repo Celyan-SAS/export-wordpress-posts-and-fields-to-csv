@@ -268,9 +268,11 @@ class wpExportPFCSV {
 	private function get_user_data_buddypress($user_id = null,$titles = false, $args = array()){
 		// Bail if no user ID.
 		if ( empty( $user_id ) ) {
+			echo "<pre>", print_r("1 -- ", 1), "</pre>";
 			return array();
 		}
 		if (!function_exists("bp_parse_args") ) {
+			echo "<pre>", print_r("2 -- ", 1), "</pre>";
 			return array();
 		}		
 
@@ -283,14 +285,14 @@ class wpExportPFCSV {
 		), 'bp_xprofile_user_admin_profile_loop_args' );
 
 		// We really need these args.
-		if ( empty( $r['profile_group_id'] ) || empty( $r['user_id'] ) ) {
-			return array();
-		}
-
-		// Bail if no profile fields are available.
-		if ( ! bp_has_profile( $r ) ) {
-			return array();
-		}
+//		if ( empty( $r['profile_group_id'] ) || empty( $r['user_id'] ) ) {
+//			return array();
+//		}
+//
+//		// Bail if no profile fields are available.
+//		if ( ! bp_has_profile( $r ) ) {
+//			return array();
+//		}
 
 		$list_to_return = array();
 		
