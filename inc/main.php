@@ -269,6 +269,9 @@ class wpExportPFCSV {
 			return array();
 		}		
 
+		if(!isset($args['args'])){
+			$args['args'] = array();
+		}
 		$r = bp_parse_args( $args['args'], array(
 			'profile_group_id' => 0,
 			'user_id'          => $user_id
