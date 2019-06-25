@@ -178,35 +178,35 @@ class wpExportPFCSV {
 			}
 			
 			/*ADD ACF----------------------------------------------------------------*/
-//			if( function_exists( 'get_fields' ) ) {
-//				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
-//					//get data
-//					$value = get_field('user_'.$acf_field_key,$user->ID);
-//					if(!$value){
-//						$value = "";
-//					}
-//					if(is_array($value)){
-//						$value = implode(',', $value);
-//					}				
-//					$value = str_replace( '"' , '""' , $value );
-//					$value = '"' . $value . '"' . ";";
-//					$line[$acf_field_key] = $value;
-//				}
-//			}
+			if( function_exists( 'get_fields' ) ) {
+				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
+					//get data
+					$value = get_field('user_'.$acf_field_key,$user->ID);
+					if(!$value){
+						$value = "";
+					}
+					if(is_array($value)){
+						$value = implode(',', $value);
+					}				
+					$value = str_replace( '"' , '""' , $value );
+					$value = '"' . $value . '"' . ";";
+					$line[$acf_field_key] = $value;
+				}
+			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
-echo "<pre>", print_r("line_before", 1), "</pre>";
-echo "<pre>", print_r($line, 1), "</pre>";				
+//echo "<pre>", print_r("line_before", 1), "</pre>";
+//echo "<pre>", print_r($line, 1), "</pre>";				
 			$list_values_buddypress = $this->get_user_data_buddypress($user->ID);
-echo "<pre>", print_r("all line buddy", 1), "</pre>";
-echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
+//echo "<pre>", print_r("all line buddy", 1), "</pre>";
+//echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
 			foreach($list_values_buddypress as $buddy_value){				
 				$buddy_value = str_replace( '"' , '""' , $buddy_value );
 				$buddy_value = '"' . $buddy_value . '"' . ";";
 				$line[] = $buddy_value;	
 			}				
-echo "<pre>", print_r("line", 1), "</pre>";
-echo "<pre>", print_r($line, 1), "</pre>";				
+//echo "<pre>", print_r("line", 1), "</pre>";
+//echo "<pre>", print_r($line, 1), "</pre>";				
 			
 			/** add/remove fields **/
 			$line = apply_filters( 'wpc_export_user_line', $line, $user->ID, $_GET );
