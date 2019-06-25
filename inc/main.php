@@ -147,7 +147,7 @@ class wpExportPFCSV {
 		/** add/remove other fields **/
 		$the_field_list_acf = apply_filters( 'wpc_export_user_acffields', $the_field_list_acf,$_GET );
 		
-		$list_titles_buddypress = get_user_data_buddypress($users[0]->ID,true);
+		$list_titles_buddypress = $this->get_user_data_buddypress($users[0]->ID,true);
 		$list_titles_buddypress = apply_filters( 'wpc_export_user_buddypressfields', $list_titles_buddypress,$_GET );
 		
 		/** order fields **/
@@ -194,7 +194,7 @@ class wpExportPFCSV {
 			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
-			$list_values_buddypress = get_user_data_buddypress($users[0]->ID);
+			$list_values_buddypress = $this->get_user_data_buddypress($users[0]->ID);
 			foreach($list_values_buddypress as $buddy_value){
 				$value = str_replace( '"' , '""' , $buddy_value );
 				$value = '"' . $value . '"' . ";";
