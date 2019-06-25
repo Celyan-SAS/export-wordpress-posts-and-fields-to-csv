@@ -147,8 +147,12 @@ class wpExportPFCSV {
 		/** add/remove other fields **/
 		$the_field_list_acf = apply_filters( 'wpc_export_user_acffields', $the_field_list_acf,$_GET );
 		
+		$list_titles_buddypress = get_user_data_buddypress($users[0]->ID,true);
+		$list_titles_buddypress = apply_filters( 'wpc_export_user_buddypressfields', $list_titles_buddypress,$_GET );
+		
 		/** order fields **/
 		$complete_list = array_merge($user_fields,$the_field_list_acf);
+		$complete_list = array_merge($complete_list,$list_titles_buddypress);
 		$order_fields = apply_filters( 'wpc_export_user_order', $complete_list,$_GET );
 		
 		/** headers (for titles) **/
@@ -188,6 +192,15 @@ class wpExportPFCSV {
 					$line[$acf_field_key] = $value;
 				}
 			}
+			
+			/*ADD buddypress ----------------------------------------------------------------*/
+			$list_values_buddypress = get_user_data_buddypress($users[0]->ID);
+			foreach($list_values_buddypress as $buddy_value){
+				$value = str_replace( '"' , '""' , $buddy_value );
+				$value = '"' . $value . '"' . ";";
+				$line[] = $value;
+			}
+			
 			/** add/remove fields **/
 			$line = apply_filters( 'wpc_export_user_line', $line, $user->ID, $_GET );
 			$data .= trim( implode('',$line) ) . "\r\n";
@@ -245,6 +258,57 @@ class wpExportPFCSV {
 		}
 		
 		return $acf_list_id;
+	}
+	
+	private function get_user_data_buddypress($user_id = null,$titles = false, $args = array()){
+		// Bail if no user ID.
+		if ( empty( $user_id ) ) {
+			return array();
+		}
+		if (!function_exists("bp_parse_args") ) {
+			return array();
+		}		
+
+		$r = bp_parse_args( $args['args'], array(
+			'profile_group_id' => 0,
+			'user_id'          => $user_id
+		), 'bp_xprofile_user_admin_profile_loop_args' );
+
+		// We really need these args.
+		if ( empty( $r['profile_group_id'] ) || empty( $r['user_id'] ) ) {
+			return array();
+		}
+
+		// Bail if no profile fields are available.
+		if ( ! bp_has_profile( $r ) ) {
+			return array();
+		}
+
+		$list_to_return = array();
+		
+		// Loop through profile groups & fields.
+		while ( bp_profile_groups() ) : bp_the_profile_group();
+
+			//group info name echo esc_attr( 'field_ids_' . bp_get_the_profile_group_slug() );
+
+			if ( bp_get_the_profile_group_description() ) {
+				//group info description bp_the_profile_group_description();
+			}
+			
+			while ( bp_profile_fields() ) : bp_the_profile_field();
+
+					//field name
+					if($titles){
+						$list_to_return[] =  bp_get_the_profile_field_input_name();
+					}else{
+						$list_to_return[] =  bp_get_the_profile_field_edit_value();
+					}
+
+			endwhile; // End bp_profile_fields()
+
+		endwhile; // End bp_profile_groups.
+		
+		return $list_to_return;
 	}
 	
 	/**
