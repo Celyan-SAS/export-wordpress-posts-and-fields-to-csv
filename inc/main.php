@@ -295,12 +295,7 @@ class wpExportPFCSV {
 //		}
 
 		$list_to_return = array();
-		
-echo "<pre>", print_r("r", 1), "</pre>";
-echo "<pre>", print_r($r, 1), "</pre>";		
-echo "<pre>", print_r("bp_the_profile_group()", 1), "</pre>";
-echo "<pre>", print_r(bp_the_profile_group(), 1), "</pre>";
-		
+				
 		// Loop through profile groups & fields.
 		while ( bp_profile_groups() ) : bp_the_profile_group();
 
