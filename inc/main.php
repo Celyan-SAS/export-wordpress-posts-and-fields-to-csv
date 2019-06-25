@@ -323,6 +323,7 @@ echo "<pre>", print_r(bp_get_the_profile_field_input_name(), 1), "</pre>";
 		endwhile; // End bp_profile_groups.
 		
 		return $list_to_return;
+die("-----------------");
 	}
 	
 	/**
