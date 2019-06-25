@@ -195,7 +195,7 @@ class wpExportPFCSV {
 			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
-			$list_values_buddypress = $this->get_user_data_buddypress($users[0]->ID);
+			$list_values_buddypress = $this->get_user_data_buddypress($user->ID);
 			foreach($list_values_buddypress as $buddy_value){
 				$value = str_replace( '"' , '""' , $buddy_value );
 				$value = '"' . $value . '"' . ";";
