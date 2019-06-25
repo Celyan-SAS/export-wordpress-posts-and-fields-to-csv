@@ -147,12 +147,8 @@ class wpExportPFCSV {
 		/** add/remove other fields **/
 		$the_field_list_acf = apply_filters( 'wpc_export_user_acffields', $the_field_list_acf,$_GET );
 		
-		$list_titles_buddypress = $this->get_user_data_buddypress($users[0]->ID,true);
-		
-		echo "<pre>", print_r("IN HERE --- ", 1), "</pre>";
-		echo "<pre>", print_r($list_titles_buddypress, 1), "</pre>";
-		die('STOP -- ');
-		
+		/** add buddypress titles **/
+		$list_titles_buddypress = $this->get_user_data_buddypress($users[0]->ID,true);		
 		$list_titles_buddypress = apply_filters( 'wpc_export_user_buddypressfields', $list_titles_buddypress,$_GET );
 		
 		/** order fields **/
@@ -291,7 +287,8 @@ class wpExportPFCSV {
 			while ( bp_profile_fields() ) : bp_the_profile_field();			
 					//field name
 					if($titles){
-						$list_to_return[] =  bp_get_the_profile_field_input_name();
+						//$list_to_return[] =  bp_get_the_profile_field_input_name();
+						$list_to_return[] =  bp_get_the_profile_field_id();
 					}else{
 						$list_to_return[] =  bp_get_the_profile_field_edit_value();
 					}
