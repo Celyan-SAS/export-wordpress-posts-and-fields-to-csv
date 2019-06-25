@@ -287,24 +287,7 @@ class wpExportPFCSV {
 			while ( bp_profile_fields() ) : bp_the_profile_field();			
 					//field name
 					if($titles){
-						//$list_to_return[] =  bp_get_the_profile_field_input_name();
-						$list_to_return[] = bp_the_profile_field_name();
-						
-						echo "<pre>", print_r("what ?", 1), "</pre>";
-						echo "<pre>", print_r(bp_the_profile_field_name(), 1), "</pre>";
-												
-						$x =  apply_filters( 'bp_get_the_profile_field_required_label', $translated_string, bp_get_the_profile_field_id() );
-						
-						echo "<pre>", print_r("test --- ", 1), "</pre>";
-						echo "<pre>", print_r($x, 1), "</pre>";
-						
-						$b =  bp_get_the_profile_field_edit_value();
-						
-						echo "<pre>", print_r("val", 1), "</pre>";
-						echo "<pre>", print_r($b, 1), "</pre>";
-						
-						die();
-						//$list_to_return[] =  bp_get_the_profile_field_id();
+						$list_to_return[] = bp_get_the_profile_field_name();
 					}else{
 						$list_to_return[] =  bp_get_the_profile_field_edit_value();
 					}
