@@ -279,10 +279,18 @@ class wpExportPFCSV {
 		if(!isset($args['args'])){
 			$args['args'] = array();
 		}
-		$r = bp_parse_args( $args['args'], array(
-			'profile_group_id' => 0,
-			'user_id'          => $user_id
-		), 'bp_xprofile_user_admin_profile_loop_args' );
+		
+		$profile_args = array(
+			'user_id'      => $user_id,
+		);
+		$a = bp_has_profile( $profile_args );
+echo "<pre>", print_r("a ------------ ", 1), "</pre>";
+echo "<pre>", print_r($a, 1), "</pre>";
+			
+//		$r = bp_parse_args( $args['args'], array(
+//			'profile_group_id' => 0,
+//			'user_id'          => $user_id
+//		), 'bp_xprofile_user_admin_profile_loop_args' );
 
 		// We really need these args.
 //		if ( empty( $r['profile_group_id'] ) || empty( $r['user_id'] ) ) {
