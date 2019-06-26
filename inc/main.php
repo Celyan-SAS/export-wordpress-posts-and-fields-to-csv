@@ -161,6 +161,9 @@ class wpExportPFCSV {
 		$header_fields = array_merge($header_fields,$list_titles_buddypress);
 		$header_fields = apply_filters('wpc_user_header_fields_filter',$header_fields,$_GET);		
 				
+echo "<pre>", print_r("he_field_list_acf", 1), "</pre>";
+echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
+		
 		/** change list of users **/
 		$users = apply_filters('wpc_users_result_filter',$users,$_GET);
 		$data = '';
@@ -199,8 +202,8 @@ class wpExportPFCSV {
 			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
-//echo "<pre>", print_r("line_before", 1), "</pre>";
-//echo "<pre>", print_r($line, 1), "</pre>";				
+echo "<pre>", print_r("line_before", 1), "</pre>";
+echo "<pre>", print_r($line, 1), "</pre>";				
 			$list_values_buddypress = $this->get_user_data_buddypress($user->ID);
 //echo "<pre>", print_r("all line buddy", 1), "</pre>";
 //echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
