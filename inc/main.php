@@ -161,8 +161,8 @@ class wpExportPFCSV {
 		$header_fields = array_merge($header_fields,$list_titles_buddypress);
 		$header_fields = apply_filters('wpc_user_header_fields_filter',$header_fields,$_GET);		
 				
-echo "<pre>", print_r("he_field_list_acf", 1), "</pre>";
-echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
+//echo "<pre>", print_r("he_field_list_acf", 1), "</pre>";
+//echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
 		
 		/** change list of users **/
 		$users = apply_filters('wpc_users_result_filter',$users,$_GET);
@@ -188,14 +188,7 @@ echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
 			if( function_exists( 'get_field' ) ) {
 				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
 					
-					$value = get_field('user_'.$acf_field_key,$user->ID);
-					echo "<pre>", print_r("acf_field_key", 1), "</pre>";
-					echo "<pre>", print_r($acf_field_key, 1), "</pre>";
-					echo "<pre>", print_r("wha?", 1), "</pre>";
-					echo "<pre>", print_r($value, 1), "</pre>";
-					
-					//get data
-					$value = get_field('user_'.$acf_field_key,$user->ID);
+					$value = get_field($acf_field_key,'user_'.$user->ID);
 					if(!$value){
 						$value = "";
 					}
@@ -209,8 +202,8 @@ echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
 			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
-echo "<pre>", print_r("line_before", 1), "</pre>";
-echo "<pre>", print_r($line, 1), "</pre>";				
+//echo "<pre>", print_r("line_before", 1), "</pre>";
+//echo "<pre>", print_r($line, 1), "</pre>";				
 			$list_values_buddypress = $this->get_user_data_buddypress($user->ID);
 //echo "<pre>", print_r("all line buddy", 1), "</pre>";
 //echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
