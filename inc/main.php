@@ -187,6 +187,13 @@ echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
 			/*ADD ACF----------------------------------------------------------------*/
 			if( function_exists( 'get_field' ) ) {
 				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
+					
+					$value = get_field('user_'.$acf_field_key,$user->ID);
+					echo "<pre>", print_r("acf_field_key", 1), "</pre>";
+					echo "<pre>", print_r($acf_field_key, 1), "</pre>";
+					echo "<pre>", print_r("wha?", 1), "</pre>";
+					echo "<pre>", print_r($value, 1), "</pre>";
+					
 					//get data
 					$value = get_field('user_'.$acf_field_key,$user->ID);
 					if(!$value){
