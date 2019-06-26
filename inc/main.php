@@ -177,6 +177,8 @@ class wpExportPFCSV {
 				$line[] = $value;
 			}
 			
+echo "<pre>", print_r("line_before ACF", 1), "</pre>";
+echo "<pre>", print_r($line, 1), "</pre>";					
 			/*ADD ACF----------------------------------------------------------------*/
 			if( function_exists( 'get_fields' ) ) {
 				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
@@ -195,18 +197,18 @@ class wpExportPFCSV {
 			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
-//echo "<pre>", print_r("line_before", 1), "</pre>";
-//echo "<pre>", print_r($line, 1), "</pre>";				
+echo "<pre>", print_r("line_before", 1), "</pre>";
+echo "<pre>", print_r($line, 1), "</pre>";				
 			$list_values_buddypress = $this->get_user_data_buddypress($user->ID);
-//echo "<pre>", print_r("all line buddy", 1), "</pre>";
-//echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
+echo "<pre>", print_r("all line buddy", 1), "</pre>";
+echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
 			foreach($list_values_buddypress as $buddy_value){				
 				$buddy_value = str_replace( '"' , '""' , $buddy_value );
 				$buddy_value = '"' . $buddy_value . '"' . ";";
 				$line[] = $buddy_value;	
-			}				
-//echo "<pre>", print_r("line", 1), "</pre>";
-//echo "<pre>", print_r($line, 1), "</pre>";				
+			}
+echo "<pre>", print_r("line", 1), "</pre>";
+echo "<pre>", print_r($line, 1), "</pre>";				
 			
 			/** add/remove fields **/
 			$line = apply_filters( 'wpc_export_user_line', $line, $user->ID, $_GET );
