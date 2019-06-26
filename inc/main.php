@@ -152,9 +152,20 @@ class wpExportPFCSV {
 		$list_titles_buddypress = apply_filters( 'wpc_export_user_buddypressfields', $list_titles_buddypress,$_GET );
 		
 		/** order fields **/
+		
+echo "<pre>", print_r("order 1 --------- ", 1), "</pre>";
+echo "<pre>", print_r($user_fields, 1), "</pre>";
+echo "<pre>", print_r("order 2 --------- ", 1), "</pre>";
+echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
+echo "<pre>", print_r("order 3 --------- ", 1), "</pre>";
+echo "<pre>", print_r($list_titles_buddypress, 1), "</pre>";
+		
 		$complete_list = array_merge($user_fields,$the_field_list_acf);
 		$complete_list = array_merge($complete_list,$list_titles_buddypress);
 		$order_fields = apply_filters( 'wpc_export_user_order', $complete_list,$_GET );
+		
+echo "<pre>", print_r("order_fields", 1), "</pre>";
+echo "<pre>", print_r($order_fields, 1), "</pre>";
 		
 		/** headers (for titles) **/
 		$header_fields = apply_filters('wpc_user_header_fields_filter',$order_fields,$_GET);
