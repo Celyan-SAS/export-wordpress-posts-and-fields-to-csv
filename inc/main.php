@@ -151,21 +151,14 @@ class wpExportPFCSV {
 		$list_titles_buddypress = $this->get_user_data_buddypress($users[0]->ID,true);		
 		$list_titles_buddypress = apply_filters( 'wpc_export_user_buddypressfields', $list_titles_buddypress,$_GET );
 		
-		/** order fields **/
-		
-echo "<pre>", print_r("order 1 --------- ", 1), "</pre>";
-echo "<pre>", print_r($user_fields, 1), "</pre>";
-echo "<pre>", print_r("order 2 --------- ", 1), "</pre>";
-echo "<pre>", print_r($the_field_list_acf, 1), "</pre>";
-echo "<pre>", print_r("order 3 --------- ", 1), "</pre>";
-echo "<pre>", print_r($list_titles_buddypress, 1), "</pre>";
-		
-		$complete_list = array_merge($user_fields,$the_field_list_acf);
+		/** order fields **/		
+		//$complete_list = array_merge($user_fields,$the_field_list_acf);
 		//$complete_list = array_merge($complete_list,$list_titles_buddypress);
-		$order_fields = apply_filters( 'wpc_export_user_order', $complete_list,$_GET );
+		$order_fields = apply_filters( 'wpc_export_user_order', $user_fields,$_GET );
 				
 		/** headers (for titles) **/
-		$header_fields = array_merge($order_fields,$list_titles_buddypress);
+		$header_fields = array_merge($order_fields,$the_field_list_acf);
+		$header_fields = array_merge($header_fields,$list_titles_buddypress);
 		$header_fields = apply_filters('wpc_user_header_fields_filter',$header_fields,$_GET);		
 				
 		/** change list of users **/
@@ -186,10 +179,10 @@ echo "<pre>", print_r($list_titles_buddypress, 1), "</pre>";
 				$line[] = $value;
 			}
 			
-echo "<pre>", print_r("line_before ACF", 1), "</pre>";
-echo "<pre>", print_r($line, 1), "</pre>";					
+//echo "<pre>", print_r("line_before ACF", 1), "</pre>";
+//echo "<pre>", print_r($line, 1), "</pre>";					
 			/*ADD ACF----------------------------------------------------------------*/
-			if( function_exists( 'get_fields' ) ) {
+			if( function_exists( 'get_field' ) ) {
 				foreach($the_field_list_acf as $acf_field_name=>$acf_field_key){
 					//get data
 					$value = get_field('user_'.$acf_field_key,$user->ID);
@@ -206,18 +199,18 @@ echo "<pre>", print_r($line, 1), "</pre>";
 			}
 			
 			/*ADD buddypress ----------------------------------------------------------------*/
-echo "<pre>", print_r("line_before", 1), "</pre>";
-echo "<pre>", print_r($line, 1), "</pre>";				
+//echo "<pre>", print_r("line_before", 1), "</pre>";
+//echo "<pre>", print_r($line, 1), "</pre>";				
 			$list_values_buddypress = $this->get_user_data_buddypress($user->ID);
-echo "<pre>", print_r("all line buddy", 1), "</pre>";
-echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
+//echo "<pre>", print_r("all line buddy", 1), "</pre>";
+//echo "<pre>", print_r($list_values_buddypress, 1), "</pre>";
 			foreach($list_values_buddypress as $buddy_value){				
 				$buddy_value = str_replace( '"' , '""' , $buddy_value );
 				$buddy_value = '"' . $buddy_value . '"' . ";";
 				$line[] = $buddy_value;	
 			}
-echo "<pre>", print_r("line", 1), "</pre>";
-echo "<pre>", print_r($line, 1), "</pre>";				
+//echo "<pre>", print_r("line", 1), "</pre>";
+//echo "<pre>", print_r($line, 1), "</pre>";				
 			
 			/** add/remove fields **/
 			$line = apply_filters( 'wpc_export_user_line', $line, $user->ID, $_GET );
