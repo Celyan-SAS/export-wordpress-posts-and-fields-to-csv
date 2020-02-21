@@ -469,6 +469,7 @@ class wpExportPFCSV {
 				}
 			}		
 			$header = implode( ';', $new_titles_ordered );
+			$header = mb_convert_encoding($header, "ISO-8859-15", mb_detect_encoding($header, "UTF-8, ISO-8859-1, ISO-8859-15", true));
 			
 			if( !empty( $_GET['debug'] ) && 1==$_GET['debug'] ) {
 				echo '<h1>Export debug</h1>';
@@ -479,7 +480,8 @@ class wpExportPFCSV {
 				header("Pragma: no-cache");
 				header("Expires: 0");
 			}
-            $data = mb_convert_encoding($data,'ISO-8859-15','utf-8');
+            //$data = mb_convert_encoding($data,'ISO-8859-15','utf-8');
+			$data = mb_convert_encoding($data, "ISO-8859-15", mb_detect_encoding($data, "UTF-8, ISO-8859-1, ISO-8859-15", true));
 			print "$header\r\n$data";
 			
 			$this->results = true;
