@@ -99,8 +99,18 @@ class wpExportPFCSV {
 		//SAVE PART
 		//if posttype_button_toadd_form is set we 
 		if(isset($_POST['posttype_button_toadd_form'])):
-			update_option( $this->_posttype_button_toadd_key, json_encode($_POST['posttype_button_toadd']));		
-			update_option( $this->_nbr_list_filters_key, $_POST['nbr_filter_wpexport']);
+			
+			$post_type_to_add = array();
+			if(isset($_POST['posttype_button_toadd'])):
+				$post_type_to_add = $_POST['posttype_button_toadd'];
+			endif;
+			update_option( $this->_posttype_button_toadd_key, json_encode($post_type_to_add));
+			
+			$nbr_filter_wpexport_toadd = 0;
+			if(isset( $_POST['nbr_filter_wpexport']) &&  $_POST['nbr_filter_wpexport']!=''):
+				$nbr_filter_wpexport_toadd = $_POST['nbr_filter_wpexport'];
+			endif;
+			update_option( $this->_nbr_list_filters_key,$nbr_filter_wpexport_toadd);
 			
 			$list_filter_to_save = array();
 			foreach($_POST as $key_post=>$value_post):
@@ -108,9 +118,7 @@ class wpExportPFCSV {
 					$list_filter_to_save[] = $value_post;
 				endif;
 			endforeach;
-			if(count($list_filter_to_save)>0):
-				update_option( $this->_list_filters_key, json_encode($list_filter_to_save,JSON_FORCE_OBJECT));
-			endif;
+			update_option( $this->_list_filters_key, json_encode($list_filter_to_save,JSON_FORCE_OBJECT));
 		endif;		
 		//END SAVE PART
 				
