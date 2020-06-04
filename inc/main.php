@@ -9,6 +9,9 @@
 class wpExportPFCSV {
 	
 	private $results = null;
+	public $_posttype_button_toadd_key = "posttype_button_toadd";
+	public $_nbr_list_filters_key = "nbr_list_filters_key";
+	public $_list_filters_key = "list_filters_key";
 	
 	/**
 	 * Class constructor
@@ -24,8 +27,28 @@ class wpExportPFCSV {
 		
 		/** Load i18n **/
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
+		
+		if(is_admin()){
+			add_action( 'wp_ajax_add_button_admin_download_csv',  array( $this, 'add_button_admin_download_csv'));
+			add_action( 'admin_init', array( $this,'wpexport_scripts')); 
+		}
 	}
 	
+	public function wpexport_scripts(){
+		wp_enqueue_script(
+			'wpexportadminscripts', 
+			plugin_dir_url( dirname(__FILE__) ).'js/admin_scripts.js' , 
+			array('jquery'), '0.0.1', false);
+
+		$list = array();
+		$options_buttons_list = get_option($this->_list_filters_key);
+		if($options_buttons_list):
+			$list = json_decode($options_buttons_list,ARRAY_A);
+		endif;
+		wp_localize_script('wpexportadminscripts', 'list_filters_export', $list );
+
+	}
+
 	/**
 	 * Adds the plugin settings page
 	 * 
@@ -58,19 +81,139 @@ class wpExportPFCSV {
 		$post_types = get_post_types( array(), 'names' );
 		?>
 		<div class="wrap">
-		<h2><?php _e( 'Export WordPress posts and fields to CSV', 'wpexportpfcsv' ); ?></h2>
+			<h2><?php _e( 'Export WordPress posts and fields to CSV', 'wpexportpfcsv' ); ?></h2>
 		<form>
-		<select name="post_type">
-			<option>WP_users</option>
-		<?php foreach( $post_types as $post_type ) : ?>
-			<option><?php echo $post_type; ?></option>
-		<?php endforeach; ?>
-		</select>
-		<input type="submit" name="action" value="<?php _e( 'Export', 'wpexportpfcsv' ); ?>" class="wpexportpfcsv" />
-		<input type="hidden" name="page" value="<?php echo htmlentities($_GET['page']); ?>" />
+			<select name="post_type">
+				<option>WP_users</option>
+			<?php foreach( $post_types as $post_type ) : ?>
+				<option><?php echo $post_type; ?></option>
+			<?php endforeach; ?>
+			</select>
+			<input type="submit" name="action" value="<?php _e( 'Export', 'wpexportpfcsv' ); ?>" class="wpexportpfcsv" />
+			<input type="hidden" name="page" value="<?php echo htmlentities($_GET['page']); ?>" />
 		</form>
+			
+			<hr>
+			
+		<?php	
+		//SAVE PART
+		//if posttype_button_toadd_form is set we 
+		if(isset($_POST['posttype_button_toadd_form'])):
+			update_option( $this->_posttype_button_toadd_key, json_encode($_POST['posttype_button_toadd']));		
+			update_option( $this->_nbr_list_filters_key, $_POST['nbr_filter_wpexport']);
+			
+			$list_filter_to_save = array();
+			foreach($_POST as $key_post=>$value_post):
+				if(preg_match('#filter_wpexport_#',$key_post)):
+					$list_filter_to_save[] = $value_post;
+				endif;
+			endforeach;
+			if(count($list_filter_to_save)>0):
+				update_option( $this->_list_filters_key, json_encode($list_filter_to_save,JSON_FORCE_OBJECT));
+			endif;
+		endif;		
+		//END SAVE PART
+				
+		$options_buttons_list = get_option($this->_posttype_button_toadd_key);
+		if($options_buttons_list):
+			$options_buttons_list = json_decode($options_buttons_list,ARRAY_A);
+		endif;
+		?>
+		<form method="post">
+			<h3><?php _e('Add export button to post type', 'wpexportpfcsv'); ?></h3>			
+				<ul>
+					<?php foreach( $post_types as $post_type ) :
+						$selected = "";
+						if($options_buttons_list && in_array($post_type, $options_buttons_list)):
+							$selected = "checked";
+						endif;
+						?>
+					<li>
+						<input name="posttype_button_toadd[]" <?php echo $selected; ?> 
+							   type="checkbox" value="<?php echo $post_type; ?>">&nbsp;<?php echo $post_type; ?>
+					</li>
+					<?php endforeach; ?>
+					<?php 
+					$selected = "";
+					if($options_buttons_list && in_array('WP_users', $options_buttons_list)): 
+						$selected = "checked";
+					endif;
+					?>
+					<li>
+						<input name="posttype_button_toadd[]" <?php echo $selected; ?> 
+							   type="checkbox" value="WP_users">&nbsp;WP_users
+					</li>
+					
+				</ul>		
+			
+			<!-- FILTERS TO CHECK OUT -->
+			<h3>List filtres</h3>		
+			<div>
+				<span><?php _e('Nombre de filtres : ','wpexportpfcsv'); ?> </span>
+				<?php
+				$nbr_list_filters = get_option($this->_nbr_list_filters_key);
+				if(!$nbr_list_filters)
+					$nbr_list_filters = 0;				
+				?>
+				<input type="text" name="nbr_filter_wpexport" value="<?php echo $nbr_list_filters; ?>">
+			</div>			
+			<ul>
+			<?php 
+				$list_filters = get_option($this->_list_filters_key);
+				if($list_filters):
+					$list_filters = json_decode($list_filters,ARRAY_A);
+				endif;				
+								
+				for($alpha=0;$alpha<$nbr_list_filters;$alpha++):
+					$value_filter = '';
+					if(isset($list_filters[$alpha])):
+						$value_filter = $list_filters[$alpha];
+					endif;
+			?>
+				<li>
+					<input type="text" 
+						   name="filter_wpexport_<?php echo $alpha; ?>" 
+						   value="<?php echo $value_filter; ?>"
+						   style="width: 280px;">
+				</li>
+				
+			<?php endfor;?>				
+			</ul>
+			
+			<input type="submit" name="action" value="<?php _e( 'Save options', 'wpexportpfcsv' ); ?>" class="wpexportpfcsv" />
+			<input type="hidden" name="posttype_button_toadd_form" value="1">
+		</form>		
 		</div>
 		<?php
+	}
+	
+	public function add_button_admin_download_csv(){
+		$link = false;
+		//if post_type and no post
+		$post_type = $_POST['post_type'];
+		
+		$options_buttons_list = get_option($this->_posttype_button_toadd_key);
+		if($options_buttons_list):
+			$options_buttons_list = json_decode($options_buttons_list,ARRAY_A);
+		endif;
+		if($options_buttons_list && in_array($post_type, $options_buttons_list)){
+			//EXport normal
+			$link_url = home_url().'/wp-admin/admin.php?page=wpexportpfcsv&post_type='.$post_type.'&action=Export';
+			$link = '<a href="'.$link_url.'" class="ac-button add-new-h2 ac-button-toggle-edit" style="top: 7px !important;">'.__('Export CSV','novespace').'</a>';
+			
+			//verions filtré
+			$add_to_link = "";
+			foreach($_POST['data_filters'] as $postkey=>$postvalue){
+				$add_to_link.= "&".$postkey."=".$postvalue;
+			}
+						
+			$link_url = home_url().'/wp-admin/admin.php?page=wpexportpfcsv&post_type='.$post_type.'&action=Export'.$add_to_link;
+			$link_url = apply_filters('wpexport_change_link_filter_admin',$link_url,$post_type);
+			
+			$link.= '<a href="'.$link_url.'" class="ac-button add-new-h2 ac-button-toggle-edit" style="top: 7px !important;">'.__('Export CSV filtré','novespace').'</a>';		
+		}	
+		echo $link;
+		wp_die();
 	}
 	
 	/**
