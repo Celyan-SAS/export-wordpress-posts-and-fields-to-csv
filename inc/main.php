@@ -271,6 +271,11 @@ class wpExportPFCSV {
 		$args = apply_filters('wpc_user_args_query_filter',$args,$_GET);
 		$users = get_users($args);		
 		
+		if(count($users)==0){
+			echo 'no users';
+			return true;
+		}
+		
 		/** set fields **/
 		$user_fields = array(
 			'ID'=>'ID',
