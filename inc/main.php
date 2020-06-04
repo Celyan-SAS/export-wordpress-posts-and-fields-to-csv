@@ -203,8 +203,10 @@ class wpExportPFCSV {
 			
 			//verions filtré
 			$add_to_link = "";
-			foreach($_POST['data_filters'] as $postkey=>$postvalue){
-				$add_to_link.= "&".$postkey."=".$postvalue;
+			if(isset($_POST['data_filters'])){
+				foreach($_POST['data_filters'] as $postkey=>$postvalue){
+					$add_to_link.= "&".$postkey."=".$postvalue;
+				}
 			}
 						
 			$link_url = home_url().'/wp-admin/admin.php?page=wpexportpfcsv&post_type='.$post_type.'&action=Export'.$add_to_link;
