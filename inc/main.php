@@ -207,7 +207,7 @@ class wpExportPFCSV {
 		if($options_buttons_list && in_array($post_type, $options_buttons_list)){
 			//EXport normal
 			$link_url = home_url().'/wp-admin/admin.php?page=wpexportpfcsv&post_type='.$post_type.'&action=Export';
-			$link = '<a href="'.$link_url.'" class="ac-button add-new-h2 ac-button-toggle-edit" style="top: 7px !important;">'.__('Export CSV','novespace').'</a>';
+			$link = '<a href="'.$link_url.'" class="ac-button add-new-h2 ac-button-toggle-edit" style="top: 7px !important;">'.__('Export CSV','wpexportpfcsv').'</a>';
 			
 			//verions filtré
 			$add_to_link = "";
@@ -220,7 +220,7 @@ class wpExportPFCSV {
 			$link_url = home_url().'/wp-admin/admin.php?page=wpexportpfcsv&post_type='.$post_type.'&action=Export'.$add_to_link;
 			$link_url = apply_filters('wpexport_change_link_filter_admin',$link_url,$post_type);
 			
-			$link.= '<a href="'.$link_url.'" class="ac-button add-new-h2 ac-button-toggle-edit" style="top: 7px !important;">'.__('Export CSV filtré','novespace').'</a>';		
+			$link.= '<a href="'.$link_url.'" class="ac-button add-new-h2 ac-button-toggle-edit" style="top: 7px !important;">'.__('Export CSV filtré','wpexportpfcsv').'</a>';		
 		}	
 		echo $link;
 		wp_die();
