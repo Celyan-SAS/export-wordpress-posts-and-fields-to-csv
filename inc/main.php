@@ -517,10 +517,10 @@ class wpExportPFCSV {
 			
 			/** add remove fields linked to the post **/
 			$the_field_list_post = apply_filters( 'wpc_export_fields_post', $the_field_list_post, $post_type );
-			
+
 			/** add remove fields linked to the ACF **/
 			$the_field_list_acf = apply_filters( 'wpc_export_fields_post_acf', $the_field_list_acf, $post_type );
-			
+
 			/** we have all fields, now needs the order, or add/remove field **/
 			$order_fields = apply_filters( 'wpc_export_order', $order_fields, $post_type );
 	
@@ -560,6 +560,7 @@ class wpExportPFCSV {
 					//foreach( array_keys( $acf_fields_a ) as $acf_field ) {
 					foreach( $the_field_list_acf as $acf_field ) {						
 						$value = get_field( $acf_field, $post->ID );
+
 						if ( ( !isset( $value ) ) || ( $value == "" ) ) {
 							$value = ";";
 						} elseif( is_object( $value ) ) {
@@ -569,16 +570,40 @@ class wpExportPFCSV {
 							$value_s = '';
 							foreach( $value as $k => $val ) {
 								if( is_array( $val ) ) {
+																		
 									foreach( $val as $key => $v ) {
 										$key = str_replace( '"' , '""' , $key );
+										
+										//ok so $v can be an array of object
+										$temp_ids = array();						
+										if(is_array($v) && count($v)>0){				
+											foreach($v as $element_value){												
+												if(is_object($element_value)){
+													if(isset($element_value->ID) && $element_value->ID!=""){
+														$temp_ids[] = $element_value->ID;
+													}elseif(isset($element_value->term_id) && $element_value->term_id!=""){
+														$temp_ids[] = $element_value->term_id;
+													}
+												}
+												if(is_array($element_value)){
+													if(isset($element_value['ID']) && $element_value['ID']!=""){
+														$temp_ids[] = $element_value['ID'];
+													}elseif(isset($element_value['term_id']) && $element_value['term_id']!=""){
+														$temp_ids[] = $element_value['term_id'];
+													}
+												}
+											}											
+											$v = implode('|', $temp_ids);
+										}
 										
 										if(is_object($v)){
 											$v = $v->ID;
 										}
 										if(is_array($v) && isset($v['ID'])){
 											$v = $v['ID'];
-										}
-										$v = str_replace( '"' , '""' , $v );
+										}										
+
+										$v = str_replace( '"' , '""' , $v );																				
 										$v = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $v );
 										if( !is_array( $v ) ) {
 											$value_s .= $key. ': ' . strip_tags( html_entity_decode( $v ) ) . "\n";
@@ -593,6 +618,7 @@ class wpExportPFCSV {
 								}
 							}
 							$value = '"' . $value_s . '"' . ";";
+														
 						} else {
 							$value = str_replace( '"' , '""' , $value );
 							$value = preg_replace( '/<br\s*\/?>\r?\n/i', "\n", $value );
@@ -602,6 +628,7 @@ class wpExportPFCSV {
 						$line[$acf_field] = $value;						
 					}
 				}
+				
 				$line = apply_filters( 'wpc_export_line', $line, $post->ID, $post_type );
 				
 				/** reorder line **/
@@ -614,8 +641,9 @@ class wpExportPFCSV {
 					}
 				}
 				
+				$new_line_ordered = apply_filters( 'wpc_export_new_line_ordered', $new_line_ordered, $post->ID, $post_type );
 				$data .= trim( implode('',$new_line_ordered) ) . "\r\n";
-			}			
+			}
 			
 			/** reorder titles **/			
 			$new_titles_ordered = array();
