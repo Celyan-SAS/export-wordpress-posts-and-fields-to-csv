@@ -268,7 +268,11 @@ class wpExportPFCSV {
 		
 		/** args for the get users and get users **/
 		$args = array();
-		$args = apply_filters('wpc_user_args_query_filter',$args,$_GET);
+		
+		if(!empty($_GET['key_role'])){
+			$args['role__in'] = array($_GET['key_role']);
+		}		
+		$args = apply_filters('wpc_user_args_query_filter',$args,$_GET);		
 		$users = get_users($args);		
 		
 		if(count($users)==0){
