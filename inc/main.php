@@ -642,7 +642,9 @@ class wpExportPFCSV {
 				}
 				
 				$new_line_ordered = apply_filters( 'wpc_export_new_line_ordered', $new_line_ordered, $post->ID, $post_type );
-				$data .= trim( implode('',$new_line_ordered) ) . "\r\n";
+				if(!empty($line)){
+					$data .= trim( implode('',$new_line_ordered) ) . "\r\n";
+				}
 			}
 			
 			/** reorder titles **/			
