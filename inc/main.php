@@ -271,7 +271,14 @@ class wpExportPFCSV {
 		
 		if(!empty($_GET['key_role'])){
 			$args['role__in'] = array($_GET['key_role']);
-		}		
+		}
+		if(!empty($_GET['key_userlanguage'])){
+			$args['meta_query'][] = array(
+				'key' => 'locale',
+                'value' => $_GET['key_userlanguage']
+			);
+		}
+				
 		$args = apply_filters('wpc_user_args_query_filter',$args,$_GET);		
 		$users = get_users($args);		
 		
