@@ -38,7 +38,7 @@ class wpExportPFCSV {
 		wp_enqueue_script(
 			'wpexportadminscripts', 
 			plugin_dir_url( dirname(__FILE__) ).'js/admin_scripts.js' , 
-			array('jquery'), '0.0.1', false);
+			array('jquery'), null, false); //null version to force refresh
 
 		$list = array();
 		$options_buttons_list = get_option($this->_list_filters_key);
